@@ -20,11 +20,11 @@ def store_post(request):
                 # You can access it like any other dictionary
                 title = json_data.get('title')
                 product = json_data.get('product')
-                user_id = json_data.get('user_id')
+                farm_id = json_data.get('farm_id')
                 price = json_data.get('price')
 
                 post_service = PostService()    
-                post_service.store([title, product, user_id, price])
+                post_service.store([title, product, farm_id, price])
                 # Do something with the data
                 
                 return JsonResponse({'message': 'Success'}, status=201)
