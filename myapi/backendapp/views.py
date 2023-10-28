@@ -89,3 +89,18 @@ def get_farm_posts(request, id):
         data.append(post_data)
 
     return JsonResponse(data, safe=False)
+
+
+@csrf_exempt
+def get_farm(request, id):
+    farm = Farm.objects.get(id=id)
+
+    farm_data = {
+        "id": farm.id,
+        "user_id": farm.user_id.id,
+        "name": farm.name,
+        "delivery_days": farm.delivery_days,
+        "delivery_time": farm.delivery_time
+    }
+
+    return JsonResponse(farm_data)
