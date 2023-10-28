@@ -80,11 +80,11 @@ def get_farm_posts(request, id):
             "description": product.description,
         }
 
-        post_data = [{
+        post_data = {
             "price": price_dict,
             "product": product_dict,
             "title": post.title
-        }]
+        }
 
         data.append(post_data)
 
