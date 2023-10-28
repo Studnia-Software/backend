@@ -3,11 +3,13 @@ from django.http import JsonResponse
 import json
 from .services.PostService import PostService
 from django.views.decorators.csrf import csrf_exempt
+from models import Farm
 
 
 @csrf_exempt
 def ping(request):
     return JsonResponse({'message': "dziala w chuj"})
+
 
 @csrf_exempt
 def store_post(request):
@@ -43,6 +45,16 @@ def store_post(request):
     else:
         return JsonResponse({'error': 'Invalid Request Method'}, status=405)
 
+
+@csrf_exempt
+def get_farms(request):
+    if request.method == 'GET':
+        farms = Farm.objects.all()
+        data = [{'id': farm.id, 'name': farm.name, 'delivery_days': farm.delivery_days, 'delivery_time': farm.delivery_time} for farm in farms]
+
+        return JsonResponse(data)
+    else:
+        return JsonResponse({'message': 'POST method required.'})
 
 
 

@@ -1,6 +1,4 @@
-from ..models import Post
-from ..models import Product
-from ..models import Price
+from ..models import Post, Product, Farm, Price
 class PostService:
 
     def store(self, arr):
@@ -30,11 +28,17 @@ class PostService:
         price.save()
         print("price saved")
 
+
+        price = Price.objects.get(id=price.id)
+        product = Product.objects.get(id=product.id)
+        farm = Farm.objects.get(id=farm_id)
+
+
         post = Post(
             title=title,
-            product_id=product.id,
-            farm_id=farm_id,
-            price_id=price.id
+            product_id=product,
+            farm_id=farm,
+            price_id=price
         )
 
         post.save()
