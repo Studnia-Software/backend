@@ -62,7 +62,14 @@ def get_farm_posts(request, id):
     farm = Farm.objects.get(id=id)
     posts = Post.objects.filter(farm_id=farm)
 
-    data = []
+    farm_data = {
+        "id": farm.id,
+        "user_id": farm.user_id.id,
+        "name": farm.name,
+        "delivery_days": farm.delivery_days,
+        "delivery_time": farm.delivery_time,
+        "posts": []
+    }
 
     for post in posts:
         price = post.price_id
@@ -86,21 +93,6 @@ def get_farm_posts(request, id):
             "title": post.title
         }
 
-        data.append(post_data)
+        farm_data["posts"].append(post_data)
 
-    return JsonResponse(data, safe=False)
-
-
-@csrf_exempt
-def get_farm(request, id):
-    farm = Farm.objects.get(id=id)
-
-    farm_data = {
-        "id": farm.id,
-        "user_id": farm.user_id.id,
-        "name": farm.name,
-        "delivery_days": farm.delivery_days,
-        "delivery_time": farm.delivery_time
-    }
-
-    return JsonResponse(farm_data)
+    return JsonResponse(farm_data, safe=False)
