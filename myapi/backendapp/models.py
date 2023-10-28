@@ -15,6 +15,7 @@ class Farm(models.Model):
     id = models.IntegerField(primary_key=True)
     user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
     name = models.CharField(max_length=16)
+    delivery_days = models.CharField(max_length=64)
     delivery_time = models.CharField(max_length=64)
 
 

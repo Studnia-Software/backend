@@ -1,6 +1,6 @@
-from models import Post
-from models import Product
-from models import Price
+from ..models import Post
+from ..models import Product
+from ..models import Price
 class PostService:
 
     def store(self, arr):
