@@ -3,7 +3,7 @@ from django.http import JsonResponse
 import json
 from .services.PostService import PostService
 from django.views.decorators.csrf import csrf_exempt
-from .models import Farm
+from .models import Farm, Post, Price
 
 
 @csrf_exempt
@@ -57,7 +57,35 @@ def get_farms(request):
         return JsonResponse({'message': 'POST method required.'})
 
 
+@csrf_exempt
+def get_farm_posts(request, id):
+    farm = Farm.objects.get(id=id)
+    posts = Post.objects.filter(farm_id=farm)
 
+    data = []
 
+    for post in posts:
+        price = post.price_id
+        product = post.product_id
 
-    
+        price_dict = {
+            "amount": price.amount,
+            "quantity": price.quantity,
+            "weight": price.weight,
+            "per_kg": price.per_kg,
+        }
+
+        product_dict = {
+            "name": product.name,
+            "description": product.description,
+        }
+
+        post_data = [{
+            "price": price_dict,
+            "product": product_dict,
+            "title": post.title
+        }]
+
+        data.append(post_data)
+
+    return JsonResponse(data, safe=False)
