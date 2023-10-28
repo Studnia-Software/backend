@@ -11,6 +11,13 @@ class User(models.Model):
     role_id = models.ForeignKey(to=Role, on_delete=models.CASCADE)
 
 
+class Farm(models.Model):
+    id = models.IntegerField(primary_key=True)
+    user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=16)
+    delivery_time = models.CharField(max_length=64)
+
+
 class Price(models.Model):
     id = models.IntegerField(primary_key=True)
     amount = models.FloatField()
@@ -26,8 +33,9 @@ class Product(models.Model):
 
 class Post(models.Model):
     id = models.IntegerField(primary_key=True)
-    user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    farm_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
     price_id = models.ForeignKey(to=Price, on_delete=models.CASCADE)
+    product_id = models.ForeignKey(to=Product, on_delete=models.CASCADE)
     title = models.CharField(max_length=64)
 
 # Create your models here.
