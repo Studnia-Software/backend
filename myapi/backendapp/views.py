@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 import json
-from services.PostService import PostService
+from .services.PostService import PostService
 
 
 def ping(request):
