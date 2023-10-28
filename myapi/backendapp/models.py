@@ -1,9 +1,14 @@
 from django.db import models
 
 
+class Role(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=16)
+
+
 class User(models.Model):
     id = models.IntegerField(primary_key=True)
-    role = models.CharField(max_length=16)
+    role_id = models.ForeignKey(to=Role, on_delete=models.CASCADE)
 
 
 class Price(models.Model):
@@ -24,10 +29,5 @@ class Post(models.Model):
     user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
     price_id = models.ForeignKey(to=Price, on_delete=models.CASCADE)
     title = models.CharField(max_length=64)
-
-
-
-
-
 
 # Create your models here.
