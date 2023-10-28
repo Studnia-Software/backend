@@ -30,6 +30,7 @@ class Price(models.Model):
 class Product(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=64)
+    description = models.TextField(max_length=400)
 
 
 class Post(models.Model):
