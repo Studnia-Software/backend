@@ -1,18 +1,17 @@
 from django.db import models
 
-
 class Role(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=16)
 
 
 class User(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     role_id = models.ForeignKey(to=Role, on_delete=models.CASCADE)
 
 
 class Farm(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
     name = models.CharField(max_length=16)
     delivery_days = models.CharField(max_length=64)
@@ -20,7 +19,7 @@ class Farm(models.Model):
 
 
 class Price(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     amount = models.FloatField()
     quantity = models.IntegerField()
     weight = models.FloatField()
@@ -28,13 +27,13 @@ class Price(models.Model):
 
 
 class Product(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=64)
     description = models.TextField(max_length=400)
 
 
 class Post(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     farm_id = models.ForeignKey(to=Farm, on_delete=models.CASCADE)
     price_id = models.ForeignKey(to=Price, on_delete=models.CASCADE)
     product_id = models.ForeignKey(to=Product, on_delete=models.CASCADE)
