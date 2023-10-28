@@ -35,7 +35,7 @@ class Product(models.Model):
 
 class Post(models.Model):
     id = models.IntegerField(primary_key=True)
-    farm_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    farm_id = models.ForeignKey(to=Farm, on_delete=models.CASCADE)
     price_id = models.ForeignKey(to=Price, on_delete=models.CASCADE)
     product_id = models.ForeignKey(to=Product, on_delete=models.CASCADE)
     title = models.CharField(max_length=64)
