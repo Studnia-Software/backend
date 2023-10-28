@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from services.PostService import PostService
+import json
 
 def ping(request):
     return JsonResponse({'message': "dziala w chuj"})
@@ -20,10 +22,11 @@ def store_post(request):
                 user_id = json_data.get('user_id')
                 price = json_data.get('price')
 
-                
+                post_service = PostService()    
+                post_service.store([title, product, user_id, price])
                 # Do something with the data
                 
-                return JsonResponse({'message': 'Success'})
+                return JsonResponse({'message': 'Success'}, status=201)
             else:
                 return JsonResponse({'error': 'Invalid Content-Type'}, status=400)
         except json.JSONDecodeError as e:
