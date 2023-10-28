@@ -3,8 +3,8 @@ from django.http import JsonResponse
 import json
 from .services.PostService import PostService
 from django.views.decorators.csrf import csrf_exempt
-from .models import Farm, Post, Price
-
+from .models import Farm, Post, Price, AreaFarmsRelation, User
+from .serializers import serialize_farm
 
 @csrf_exempt
 def ping(request):
@@ -50,49 +50,75 @@ def store_post(request):
 def get_farms(request):
     if request.method == 'GET':
         farms = Farm.objects.all()
-        data = [{'id': farm.id, 'name': farm.name, 'delivery_days': farm.delivery_days, 'delivery_time': farm.delivery_time} for farm in farms]
-        
+        data = [serialize_farm(farm) for farm in farms]
         return JsonResponse(data, safe=False)
     else:
-        return JsonResponse({'message': 'POST method required.'})
+        return JsonResponse({'message': 'GET method required.'})
 
 
 @csrf_exempt
-def get_farm_posts(request, id):
-    farm = Farm.objects.get(id=id)
-    posts = Post.objects.filter(farm_id=farm)
+def get_user(request, user_id: int):
+    if request.method == "GET":
+        user = User.objects.get(id=user_id)
+        return JsonResponse({"id": user.id, "role": user.role_id.name, "area": user.area_id.name})
+    else:
+        return JsonResponse({'message': 'GET method required.'})
 
-    farm_data = {
-        "id": farm.id,
-        "user_id": farm.user_id.id,
-        "name": farm.name,
-        "delivery_days": farm.delivery_days,
-        "delivery_time": farm.delivery_time,
-        "posts": []
-    }
 
-    for post in posts:
-        price = post.price_id
-        product = post.product_id
+@csrf_exempt
+def get_farms_user_area(request, user_id: int):
+    if request.method == "GET":
+        user = User.objects.get(id=user_id)
+        area_farms_relations = AreaFarmsRelation.objects.filter(area_id=user.area_id)
 
-        price_dict = {
-            "amount": price.amount,
-            "quantity": price.quantity,
-            "weight": price.weight,
-            "per_kg": price.per_kg,
+        farms = [farm_relation.farms_id for farm_relation in area_farms_relations]
+        data = [serialize_farm(farm) for farm in farms]
+
+        return JsonResponse(data, safe=False)
+    else:
+        return JsonResponse({'message': 'GET method required.'})
+
+
+@csrf_exempt
+def get_farm_posts(request, farm_id: int):
+    if request.method == 'GET':
+        farm = Farm.objects.get(id=farm_id)
+        posts = Post.objects.filter(farm_id=farm)
+
+        farm_data = {
+            "id": farm.id,
+            "user_id": farm.user_id.id,
+            "name": farm.name,
+            "delivery_days": farm.delivery_days,
+            "delivery_time": farm.delivery_time,
+            "posts": []
         }
 
-        product_dict = {
-            "name": product.name,
-            "description": product.description,
-        }
+        for post in posts:
+            price = post.price_id
+            product = post.product_id
 
-        post_data = {
-            "price": price_dict,
-            "product": product_dict,
-            "title": post.title
-        }
+            price_dict = {
+                "amount": price.amount,
+                "quantity": price.quantity,
+                "weight": price.weight,
+                "per_kg": price.per_kg,
+            }
 
-        farm_data["posts"].append(post_data)
+            product_dict = {
+                "name": product.name,
+                "description": product.description,
+            }
 
-    return JsonResponse(farm_data, safe=False)
+            post_data = {
+                "price": price_dict,
+                "product": product_dict,
+                "title": post.title
+            }
+
+            farm_data["posts"].append(post_data)
+
+        return JsonResponse(farm_data, safe=False)
+    else:
+        return JsonResponse({'message': 'GET method required.'})
+
