@@ -8,9 +8,8 @@ class Role(models.Model):
 
 class Price(models.Model):
     id = models.AutoField(primary_key=True)
-    amount = models.FloatField()
-    quantity = models.IntegerField()
-    weight = models.FloatField()
+    price_per_unit = models.FloatField()
+    quantity = models.FloatField()
     per_kg = models.BooleanField()
 
 
@@ -57,5 +56,19 @@ class Post(models.Model):
     price_id = models.ForeignKey(to=Price, on_delete=models.CASCADE)
     product_id = models.ForeignKey(to=Product, on_delete=models.CASCADE)
     title = models.CharField(max_length=64)
-# Create your models here.
+
+
+class OrderInfo(models.Model):
+    id = models.AutoField(primary_key=True)
+    product_id = models.ForeignKey(to=Product, on_delete=models.CASCADE)
+    total_price = models.FloatField()
+    quantity = models.FloatField()
+    per_kg = models.BooleanField()
+
+
+class Order(models.Model):
+    id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    farm_id = models.ForeignKey(to=Farm, on_delete=models.CASCADE)
+    order_info_id = models.ForeignKey(to=OrderInfo, on_delete=models.CASCADE)
 

@@ -3,8 +3,8 @@ from django.http import JsonResponse
 import json
 from .services.PostService import PostService
 from django.views.decorators.csrf import csrf_exempt
-from .models import Farm, Post, Price, AreaFarmsRelation, User
-from .serializers import serialize_farm
+from .models import Farm, Post, Price, AreaFarmsRelation, User, OrderInfo, Order
+from .serializers import serialize_farm, serialize_order
 
 @csrf_exempt
 def ping(request):
@@ -99,9 +99,8 @@ def get_farm_posts(request, farm_id: int):
             product = post.product_id
 
             price_dict = {
-                "amount": price.amount,
+                "price_per_unit": price.price_per_unit,
                 "quantity": price.quantity,
-                "weight": price.weight,
                 "per_kg": price.per_kg,
             }
 
@@ -121,4 +120,46 @@ def get_farm_posts(request, farm_id: int):
         return JsonResponse(farm_data, safe=False)
     else:
         return JsonResponse({'message': 'GET method required.'})
+
+
+@csrf_exempt
+def create_order(request):
+    if request.method == "POST":
+        body = request.data
+
+        user = User.objects.get(id=body["user_id"])
+        farm = Farm.objects.get(id=body["farm_id"])
+        post = Post.objects.get(id=body["post_id"])
+        quantity = body["quantity"]
+        per_kg = body["per_kg"]
+
+        if quantity > post.price_id.quantity:
+            print("Too much")
+
+        product = post.product_id
+        total_price = post.price_id.price_per_unit * quantity
+
+        new_order_info = OrderInfo(product_id=product, total_price=total_price, quantity=quantity, per_kg=per_kg)
+        new_order_info.save()
+        new_order = Order(user_id=user, farm_id=farm, order_info_id=new_order_info)
+        new_order.save()
+
+        return JsonResponse({'status': 200, 'message': 'Created new order'})
+    else:
+        return JsonResponse({'message': 'POST method required'})
+
+
+def fetch_farm_orders(request, farm_id: int):
+    if request.method == "GET":
+        data = Order.objects.filter(farm_id=farm_id)
+        orders = [serialize_order(order) for order in data]
+
+        return JsonResponse(orders, safe=False)
+    else:
+        return JsonResponse({'message': 'GET method required'})
+
+
+
+
+
 

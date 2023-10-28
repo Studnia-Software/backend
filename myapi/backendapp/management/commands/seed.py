@@ -100,7 +100,7 @@ class Command(BaseCommand):
                     for j in range(5):
                         new_product = models.Product(name=f"Gówno {i}", description="Gówno z krowy jeszcze ciepłe")
                         new_product.save()
-                        new_price = models.Price(amount=50 * i, quantity=1 + i, weight=100 * i, per_kg=bool(i % 2))
+                        new_price = models.Price(price_per_unit=50 * i, quantity=1 + i, per_kg=bool(i % 2))
                         new_price.save()
                         new_post = models.Post(farm_id=new_farm, price_id=new_price, product_id=new_product, title=f"Dupa {i}")
                         new_post.save()
