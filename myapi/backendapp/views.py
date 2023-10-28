@@ -2,12 +2,14 @@ from django.shortcuts import render
 from django.http import JsonResponse
 import json
 from .services.PostService import PostService
+from django.views.decorators.csrf import csrf_exempt
 
 
+@csrf_exempt
 def ping(request):
     return JsonResponse({'message': "dziala w chuj"})
 
-
+@csrf_exempt
 def store_post(request):
     if request.method == 'POST':
         try:
@@ -18,13 +20,19 @@ def store_post(request):
                 
                 # Now, json_data is a Python dictionary containing your JSON data
                 # You can access it like any other dictionary
-                title = json_data.get('title')
-                product = json_data.get('product')
-                farm_id = json_data.get('farm_id')
-                price = json_data.get('price')
+                data_dict = {
+                    'title': json_data.get('title'),
+                    'product_name': json_data.get('product_name'),
+                    'product_description': json_data.get('product_description'),
+                    'farm_id': json_data.get('farm_id'),
+                    'amount': json_data.get('amount'),
+                    'quantity': json_data.get('quantity'),
+                    'weight': json_data.get('weight'),
+                    'per_kg': json_data.get('per_kg')
+                    }               
 
                 post_service = PostService()    
-                post_service.store([title, product, farm_id, price])
+                post_service.store(data_dict)
                 # Do something with the data
                 
                 return JsonResponse({'message': 'Success'}, status=201)

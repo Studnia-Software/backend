@@ -5,20 +5,20 @@ class PostService:
 
     def store(self, arr):
         title = arr['title']
-        product_name = arr['product']['name']
-        product_description = arr['product']['description'] 
-        farm_id = arr['user_id']
-        amount = arr['price']['amount']
-        quantity = arr['price']['quantity']
-        weight = arr['price']['weight']
-        per_kg = arr['price']['per_kg']
+        product_name = arr['product_name']
+        product_description = arr['product_description'] 
+        farm_id = arr['farm_id']
+        amount = arr['amount']
+        quantity = arr['quantity']
+        weight = arr['weight']
+        per_kg = arr['per_kg']
 
         product = Product(
             name=product_name,
             description=product_description
         )
-
         product.save()
+        print("product saved")
 
         price = Price(
             amount = amount,
@@ -28,6 +28,7 @@ class PostService:
         )
 
         price.save()
+        print("price saved")
 
         post = Post(
             title=title,
@@ -37,4 +38,6 @@ class PostService:
         )
 
         post.save()
+        print("post saved")
+
         
