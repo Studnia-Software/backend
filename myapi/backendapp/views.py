@@ -14,6 +14,8 @@ def ping(request):
 @csrf_exempt
 def store(request):
     if request.method == 'POST':
+        print(request)
+
         json_data = json.loads(request.body.decode('utf-8'))
         farm = Farm.objects.get(id=json_data.get("farm_id"))
         title = json_data.get("title")
