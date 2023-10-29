@@ -14,38 +14,29 @@ def ping(request):
 @csrf_exempt
 def store(request):
     if request.method == 'POST':
-        try:
-            if 'application/json' in request.content_type:
-                json_data = json.loads(request.body.decode('utf-8'))
-                user = User.objects.get(id=json_data.get("user_id"))
-                title = json_data.get("title")
+        json_data = json.loads(request.body.decode('utf-8'))
+        user = User.objects.get(id=json_data.get("user_id"))
+        title = json_data.get("title")
 
-                product_name = json_data.get("product_name")
-                product_description = json_data.get("product_description")
+        product_name = json_data.get("product_name")
+        product_description = json_data.get("product_description")
 
-                product = Product(name=product_name, description=product_description)
-                product.save()
+        product = Product(name=product_name, description=product_description)
+        product.save()
 
-                amount = json_data.get("amount")
-                quantity = json_data.get("quantity")
-                per_kg = json_data.get("per_kg")
+        amount = json_data.get("amount")
+        quantity = json_data.get("quantity")
+        per_kg = json_data.get("per_kg")
 
-                price = Price(amount=amount, quantity=quantity, per_kg=per_kg)
-                price.save()
+        price = Price(amount=amount, quantity=quantity, per_kg=per_kg)
+        price.save()
 
-                farm = Farm.objects.get(user_id=user)
+        farm = Farm.objects.get(user_id=user)
 
-                post = Post(farm_id=farm, price_id=price, product_id=product, title=title)
-                post.save()
+        post = Post(farm_id=farm, price_id=price, product_id=product, title=title)
+        post.save()
 
-
-
-                
-                return JsonResponse({'message': 'Success'}, status=201)
-            else:
-                return JsonResponse({'error': 'Invalid Content-Type'}, status=400)
-        except json.JSONDecodeError as e:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        return JsonResponse({'message': 'Success'}, status=200)
     else:
         return JsonResponse({'error': 'Invalid Request Method'}, status=405)
 
