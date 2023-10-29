@@ -15,7 +15,7 @@ def ping(request):
 def store(request):
     if request.method == 'POST':
         json_data = json.loads(request.body.decode('utf-8'))
-        user = User.objects.get(id=json_data.get("user_id"))
+        farm = Farm.objects.get(id=json_data.get("farm_id"))
         title = json_data.get("title")
 
         product_name = json_data.get("product_name")
@@ -31,7 +31,6 @@ def store(request):
         price = Price(amount=amount, quantity=quantity, per_kg=per_kg)
         price.save()
 
-        farm = Farm.objects.get(user_id=user)
 
         post = Post(farm_id=farm, price_id=price, product_id=product, title=title)
         post.save()
