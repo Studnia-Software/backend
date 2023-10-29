@@ -3,7 +3,7 @@ from django.http import JsonResponse
 import json
 from .services.PostService import PostService
 from django.views.decorators.csrf import csrf_exempt
-from .models import Farm, Post, Price, AreaFarmsRelation, User, OrderInfo, Order
+from .models import Farm, Post, Price, AreaFarmsRelation, User, OrderInfo, Order, Role
 from .serializers import serialize_farm, serialize_order
 
 @csrf_exempt
@@ -158,6 +158,13 @@ def fetch_farm_orders(request, farm_id: int):
     else:
         return JsonResponse({'message': 'GET method required'})
 
+
+@csrf_exempt
+def get_users(request):
+    if request.method == "GET":
+        return JsonResponse([{'id': user.id, 'role_id': user.role_id.id, 'location': {'city': user.area_id.city_id.name, 'area': user.area_id.name}} for user in User.objects.all()], safe=False)
+    else:
+        return JsonResponse({'message': 'GET method required'})
 
 
 
