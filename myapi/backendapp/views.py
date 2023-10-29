@@ -3,7 +3,7 @@ from django.http import JsonResponse
 import json
 from .services.PostService import PostService
 from django.views.decorators.csrf import csrf_exempt
-from .models import Farm, Post, Price, AreaFarmsRelation, User, OrderInfo, Order, Role
+from .models import Farm, Post, Price, AreaFarmsRelation, Product, User, OrderInfo, Order, Role
 from .serializers import serialize_farm, serialize_order
 
 @csrf_exempt
@@ -15,27 +15,31 @@ def ping(request):
 def store_post(request):
     if request.method == 'POST':
         try:
-            # Check if the Content-Type is application/json
             if 'application/json' in request.content_type:
-                # Parse the JSON data
                 json_data = json.loads(request.body.decode('utf-8'))
-                
-                # Now, json_data is a Python dictionary containing your JSON data
-                # You can access it like any other dictionary
-                data_dict = {
-                    'title': json_data.get('title'),
-                    'product_name': json_data.get('product_name'),
-                    'product_description': json_data.get('product_description'),
-                    'farm_id': json_data.get('farm_id'),
-                    'amount': json_data.get('amount'),
-                    'quantity': json_data.get('quantity'),
-                    'weight': json_data.get('weight'),
-                    'per_kg': json_data.get('per_kg')
-                    }               
+                user = User.objects.get(id=json_data.get("user_id"))
+                title = json_data.get("title")
 
-                post_service = PostService()    
-                post_service.store(data_dict)
-                # Do something with the data
+                product_name = json_data.get("product_name")
+                product_description = json_data.get("product_description")
+
+                product = Product(name=product_name, description=product_description)
+                product.save()
+
+                amount = json_data.get("amount")
+                quantity = json_data.get("quantity")
+                per_kg = json_data.get("per_kg")
+
+                price = Price(amount=amount, quantity=quantity, per_kg=per_kg)
+                price.save()
+
+                farm = Farm.objects.get(user_id=user)
+
+                post = Post(farm_id=farm, price_id=price, product_id=product, title=title)
+                post.save()
+
+
+
                 
                 return JsonResponse({'message': 'Success'}, status=201)
             else:
