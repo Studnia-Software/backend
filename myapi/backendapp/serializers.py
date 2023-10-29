@@ -1,4 +1,4 @@
-from .models import Farm, AreaFarmsRelation, Order, OrderInfo
+from .models import Farm, AreaFarmsRelation, Order, OrderProduct
 
 
 def serialize_farm(farm: Farm):
@@ -12,8 +12,7 @@ def serialize_order(order: Order):
         'id': order.id,
         'user': {'id': order.user_id.id, 'role': order.user_id.role_id.name},
         'farm': serialize_farm(order.farm_id),
-        'product': order.order_info_id.product_id.name,
-        'total_price': order.order_info_id.total_price,
-        'quantity': order.order_info_id.quantity,
-        'per_kg': order.order_info_id.per_kg
+        'products': [
+            {'id': product.id, 'product': product.product_id.name, 'price_per_unit': product.price, 'quantity': product.quantity, 'total_price': product.price * product.quantity, 'per_kg': product.per_kg} for product in OrderProduct.objects.filter(order_id=order)
+        ]
     }
