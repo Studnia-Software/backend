@@ -12,7 +12,7 @@ def ping(request):
 
 
 @csrf_exempt
-def store_post(request):
+def store(request):
     if request.method == 'POST':
         try:
             if 'application/json' in request.content_type:
