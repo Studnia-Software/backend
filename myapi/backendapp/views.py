@@ -3,7 +3,7 @@ from django.http import JsonResponse
 import json
 from .services.PostService import PostService
 from django.views.decorators.csrf import csrf_exempt
-from .models import Farm, Post, Price, AreaFarmsRelation, Product, User, OrderInfo, Order, Role
+from .models import Farm, Post, Price, AreaFarmsRelation, Product, User, OrderProduct, Order, Role
 from .serializers import serialize_farm, serialize_order
 
 @csrf_exempt
@@ -129,24 +129,24 @@ def get_farm_posts(request, farm_id: int):
 @csrf_exempt
 def create_order(request):
     if request.method == "POST":
-        body = request.data
+        json_data = request.body.decode('utf-8')
+        user = User.objects.get(id=json_data.get("user_id"))
+        farm = Farm.objects.get(id=json_data.get("farm_id"))
+        posts = json_data.get("posts")
 
-        user = User.objects.get(id=body["user_id"])
-        farm = Farm.objects.get(id=body["farm_id"])
-        post = Post.objects.get(id=body["post_id"])
-        quantity = body["quantity"]
-        per_kg = body["per_kg"]
-
-        if quantity > post.price_id.quantity:
-            print("Too much")
-
-        product = post.product_id
-        total_price = post.price_id.price_per_unit * quantity
-
-        new_order_info = OrderInfo(product_id=product, total_price=total_price, quantity=quantity, per_kg=per_kg)
-        new_order_info.save()
-        new_order = Order(user_id=user, farm_id=farm, order_info_id=new_order_info)
+        new_order = Order(user_id=user, farm_id=farm, total_price=0)
         new_order.save()
+
+        for post_json in posts:
+            post = Post.objects.get(id=post_json.get("id"))
+            product = post.product_id
+            price = post.price_id
+            quantity = post_json.get("quantity")
+
+            order_product = OrderProduct(product_id=product, price=price.price_per_unit, quantity=quantity, per_kg=price.per_kg, order_id=new_order)
+            order_product.save()
+
+            new_order.total_price += price.price_per_unit * quantity
 
         return JsonResponse({'status': 200, 'message': 'Created new order'})
     else:

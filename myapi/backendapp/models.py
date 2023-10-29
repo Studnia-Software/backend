@@ -58,17 +58,16 @@ class Post(models.Model):
     title = models.CharField(max_length=64)
 
 
-class OrderInfo(models.Model):
-    id = models.AutoField(primary_key=True)
-    product_id = models.ForeignKey(to=Product, on_delete=models.CASCADE)
-    total_price = models.FloatField()
-    quantity = models.FloatField()
-    per_kg = models.BooleanField()
-
-
 class Order(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
     farm_id = models.ForeignKey(to=Farm, on_delete=models.CASCADE)
-    order_info_id = models.ForeignKey(to=OrderInfo, on_delete=models.CASCADE)
 
+
+class OrderProduct(models.Model):
+    id = models.AutoField(primary_key=True)
+    product_id = models.ForeignKey(to=Product, on_delete=models.CASCADE)
+    price = models.FloatField()
+    quantity = models.FloatField()
+    per_kg = models.BooleanField()
+    order_id = models.ForeignKey(to=Order, on_delete=models.CASCADE)
